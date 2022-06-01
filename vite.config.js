@@ -13,7 +13,7 @@ export default {
     },
   proxy: {
       '/api': {
-        target: 'http://localhost:4000',
+        target: 'https://WaterLevel-Backend-ecs162-s22-39.ecs162-s22.repl.co',
         changeOrigin: true,
         secure: false,
         ws: true

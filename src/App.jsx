@@ -1,20 +1,29 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './App.css';
+import Picker from 'react-month-picker';
 import MonthPicker from "simple-react-month-picker";
 import {Chart, registerables} from 'chart.js';
+import 'react-month-picker/css/month-picker.css'
 import moment from 'moment';
 Chart.register(...registerables);
-
+let chart = null;
 function App() {
-  const[show,setShow]=useState(false);
-  const [start, setStart] = useState(new moment(new Date()).startOf('month').toDate().getTime());
-  const [end, setEnd] = useState(new moment(new Date()).endOf('month').toDate().getTime());
+  const [show, setShow] = useState(false);
+  const ref = useRef();
+  const [m, setM] = useState({year: 2022, month: 5})
+
   useEffect(() => {
+    let start, end;
+    start = moment(`${m.year}-${m.month}-01`).startOf('month').toDate().getTime();
+    end = moment(`${m.year}-${m.month}-01`).endOf('month').toDate().getTime();
     const fetchData = async () => {
       const res = await fetch(`/api/waters/${start}/${end}`);
       const data = await res.json();
       const ctx = document.getElementById('myChart').getContext('2d');
-      const myChart = new Chart(ctx, {
+      if (chart) {
+        chart.destroy();
+      }
+      chart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: data.map(item => item.stationId),
@@ -36,7 +45,8 @@ function App() {
     }
     fetchData();
 
-  }, [start, end]);
+  }, [m]);
+
   return (
     <main>
       <header>
@@ -61,23 +71,11 @@ function App() {
               Ideally, it also transfers some water from the seasonal snowpack into long-term underground storage. Finally,
               hydro-power from the many dams provides carbon-free electricity.
             </p>
-            <button onClick={() => setShow(!show)}>{show ? 'show less' : 'show more'}</button>
+            <button>See less</button>
           </div>
         </div>
-        <Showmore more={show} />
-      </div>
 
-    </main>
-  );
-}
-
-function Showmore(props) {
-  if (!props.more) {
-    return null;
-  }
-
-  return (
-      <div className={'chart row'}>
+        <div className={'chart row'}>
           <div className={'chart-search col-12'}>
             <p>
               Here's a quick look at some of the data on reservoirs from the <a href="https://cdec.water.ca.gov/index.html">California
@@ -87,26 +85,37 @@ function Showmore(props) {
             </p>
             <div >
               <h3 className={'search-title'}>Change month:</h3>
-              <div >
-                <MonthPicker style={{ width: 300 }}
-                             onChange={([s, e]) => {
-                               setStart(new moment(s).startOf('month').toDate().getTime());
-                               setEnd(new moment(e).endOf('month').toDate().getTime());
-                             }}
-                             presets={[
-                              {
-                                title: "Past Year",
-                                start: moment("2022-01-01").toDate(),
-                                end: moment().endOf("month").toDate(),
-                              },
-                            ]}/>
-              </div>
+              <Picker
+                years={{min: {year:2020, month: 1}, max: {year:2022, month: 5}}}
+                lang={[
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec"
+              ]} value={m} ref={ref} show={show} onChange={(year, month) => {
+                setM({year, month})
+                setShow(false);
+              }}>
+                <div onClick={() => setShow(!show)} style={{padding: '10px', border: '1px solid gray', width: '100px'}}>{moment(`${m.year}-${m.month}`).format("MMM YYYY")}</div>
+              </Picker>
             </div>
           </div>
           <div className={'bar-chart col-12'}>
             <canvas id={"myChart"}></canvas>
           </div>
         </div>
+
+      </div>
+
+    </main>
   );
 }
 
