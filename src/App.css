@@ -29,15 +29,18 @@ main {
 }
 header {
     box-sizing: border-box;
-    padding: 0 10%;
+    padding: 0 8%;
     width: 100%;
-    height: 10vh;
+    height: 100px;
     background-color: rgb(66, 145, 152);
     display: flex;
-    justify-content: center;
     align-items: center;
     color: white;
-    font-size: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    margin:0 auto;
+    padding:0 auto;
 }
 .content {
     margin: auto;
@@ -45,12 +48,18 @@ header {
 }
 .photo {
     width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: regular;
 }
 button {
     background-color: rgb(66, 145, 152);
     color: white;
     padding: 10px;
     border: none;
+    font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
 }
 .introduction {
     display: grid;
@@ -59,31 +68,45 @@ button {
 }
 .intro-text{
     grid-area: intro-left;
+  padding-top:10px;
 }
 .intro-image {
     grid-area: intro-right;
+    padding: 30px;;
 }
 .chart {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "chart-left chart-right";
+    padding-top: 45px;
 }
 .bar-chart {
+    height: 250px;
+    width: 400px;
     grid-area: chart-left;
 }
 .chart-search {
     grid-area: chart-right;
     box-sizing: border-box;
     padding: 0 10px;
+    padding-left: 80px;
 }
 .search-title {
-    color: rgb(120, 199, 227);
+    color: rgb(66, 145, 152);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
 }
-
-@media only screen and (max-width: 768px) {
-    html {
-        font-size: 11px;
-    }
+.left{
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+.button{
+    border-radius:6px;
+  width:120px;
+}
+@media only screen and (max-width: 900px) {
     [class*="col-"] {
         box-sizing: border-box;
         padding: 0px 5px;
@@ -95,4 +118,48 @@ button {
     .chart {
         display: flex;
     }
+  .content{
+    padding:100px;
+  }
+  .changeM{
+    margin-top:30px;
+    margin-bottom: 60px;
+  }
+  header{
+    display:fles;
+    justify-item:center;
+    align-items: center;
+    text-align:center;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+    [class*="col-"] {
+        box-sizing: border-box;
+        padding: 0px 5px;
+        width: 100%;
+    }
+    .content{
+      padding:30px;
+    }
+  header{
+    text-align:center;
+  }
+  .changeM{
+    margin-top:10px;
+    margin-bottom:30px;
+  }
+    /*.introduction {
+        display: flex;
+    }
+    .chart {
+        display: flex;
+    }
+  .content{
+    padding:100px;
+  }
+  .changeM{
+    margin-top:30px;
+    margin-bottom:60px;
+  }*/
 }

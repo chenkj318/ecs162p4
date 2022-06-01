@@ -21,7 +21,7 @@ export const data = [{
     "units": "AF"
   },
   {
-    "stationId": "DON",
+    "stationId": "DNP",
     "durCode": "M",
     "SENSOR_NUM": 15,
     "sensorType": "STORAGE",
