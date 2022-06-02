@@ -3,6 +3,9 @@ import './App.css';
 import Picker from 'react-month-picker';
 import MonthPicker from "simple-react-month-picker";
 import {Chart, registerables} from 'chart.js';
+import useAsyncFetch from './useAsyncFetch'; // a custom hook
+// import BarChart from './CJSBarChart';
+import { Bar } from "react-chartjs-2";
 import 'react-month-picker/css/month-picker.css'
 import moment from 'moment';
 Chart.register(...registerables);
@@ -53,73 +56,6 @@ function Showmore(props) {
   const ref = useRef();
   const [m, setM] = useState({year: 2022, month: 5})
 
-  useEffect(() => {
-    let start, end;
-    start = moment(`${m.year}-${m.month}-01`).startOf('month').toDate().getTime();
-    end = moment(`${m.year}-${m.month}-01`).endOf('month').toDate().getTime();
-    const fetchData = async () => {
-      const res = await fetch(`/api/waters/${start}/${end}`);
-      const data = await res.json();
-      var ctx = document.getElementById('myChart').getContext('2d');
-      var capacity=[4552000,3537577,2447650,2400000,1062000,2030000,1602000]
-      console.log("capacity:",capacity);
-      var values=data.map(item => item.value);
-      console.log("values:",values);
-      var backbar=capacity.map(function(item,index){
-        return item-values[index];
-      })
-      console.log("minus:",backbar)
-      if (chart) {
-        chart.destroy();
-      }
-      chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels:['Shasta', 'Oroville', 'Trinity Lake', 'New Melones', 'San Luis', 'Don Pedro', 'Berryessa'],
-          //labels: data.map(item => item.stationId),
-          datasets: [{
-            label: 'water',
-            data: data.map(item => item.value),
-            backgroundColor: 'rgb(66, 145, 152)',
-            barThickness:25
-          },{
-            label: 'capacity',
-            data: backbar,
-            backgroundColor: 'rgb(120, 199, 227)',
-            barThickness:25
-          }]
-        },
-        options: {
-          maintainAspectRatio:false,
-          plugins:{
-            legend:false
-          },
-          scales: {
-            x:{
-              stacked:true,
-              grid:{
-                display:false
-              }
-            },
-            y: {
-              grid:{
-                display:false
-              },
-              beginAtZero: true,
-              stacked:true,
-              max:6000000,
-              ticks:{
-                stepSize:1000000
-              }
-            }
-          }
-        }
-      });
-    }
-    fetchData();
-
-  }, [m]);
-  
   if (!props.more) {
     return null;
   }
@@ -158,9 +94,96 @@ function Showmore(props) {
             </div>
           </div>
           <div className={'bar-chart col-12'}>
-            <canvas id={"myChart"}></canvas>
+            <Display></Display>
           </div>
         </div>
   );
 }
+
+function Display(){
+  console.log("in display");
+  const [m, setM] = useState({year: 2022, month: 5})
+  const [waters,setWaters]=useState([]);
+  let start, end;
+    start = moment(`${m.year}-${m.month}-01`).startOf('month').toDate().getTime();
+    end = moment(`${m.year}-${m.month}-01`).endOf('month').toDate().getTime();
+
+  useAsyncFetch(thenFun,catchFun);
+
+  function thenFun(result){
+    setWaters(result);
+  }
+
+  if(waters){
+    return(
+      <WaterChart waters={waters}></WaterChart>
+    )
+  }
+}
+
+function WaterChart(props){
+  console.log(props.waters);
+  const nicknames=new Map();
+  nicknames.set(0,'Shasta');
+  nicknames.set(1,'Oroville');
+  nicknames.set(2,'Trinity Lake');
+  nicknames.set(3,'New Melones');
+  nicknames.set(4,'San Luis');
+  nicknames.set(5,'Don Pedro');
+  nicknames.set(6,'Berryessa');
+
+  if(props.waters){
+    let data=props.waters;
+    //building capacity
+    var capacity=[4552000,3537577,2447650,2400000,1062000,2030000,1602000]
+      console.log("capacity:",capacity);
+      var values=data.map(item => item.value);//!
+      console.log("values:",values);
+      var backbar=capacity.map(function(item,index){
+        return item-values[index];
+      })//getting stack bar, capacity - watervalue
+      console.log("minus:",backbar)
+    //end
+    let valuesArr={label:"water",data:values,backgroundColor:['rgb(66, 145, 152)'],barThickness:25}
+    let capacityArr={label:"capacity",data:backbar,backgroundColor:['rgb(120, 199, 227)'],barThickness:25}
+    let labels=['Shasta', 'Oroville', 'Trinity Lake', 'New Melones', 'San Luis', 'Don Pedro', 'Berryessa']
+  }
+
+  let userData={};
+  userData.labels=labels;
+  userData.datasets=[valuesArr,capacityArr];
+
+  console.log("userData:",userData);
+  let options={
+          maintainAspectRatio:false,
+          plugins:{
+            legend:false
+          },
+          scales: {
+            x:{
+              stacked:true,
+              grid:{
+                display:false
+              }
+            },
+            y: {
+              grid:{
+                display:false
+              },
+              beginAtZero: true,
+              stacked:true,
+              max:6000000,
+              ticks:{
+                stepSize:1000000
+              }
+            }
+          }
+  };
+  return(
+    <div id="chart-containerbilibili">
+      <Bar options={options} data={userData} />
+    </div>
+  )
+}
+
 export default App;
