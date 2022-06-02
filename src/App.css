@@ -38,7 +38,7 @@ header {
     color: white;
     font-family: 'Inter', sans-serif;
     font-size: 28px;
-    font-weight: bold;
+    font-weight: 700;
     margin:0 auto;
     padding:0 auto;
 }
@@ -48,9 +48,12 @@ header {
 }
 .photo {
     width: 100%;
+
+}
+.caption{
     font-family: 'Inter', sans-serif;
     font-size: 12px;
-    font-weight: regular;
+    font-weight: 400;
 }
 button {
     background-color: rgb(66, 145, 152);
@@ -126,7 +129,8 @@ button {
     margin-bottom: 60px;
   }
   header{
-    display:fles;
+    display:flex;
+    justify-content: center;
     justify-item:center;
     align-items: center;
     text-align:center;
@@ -144,6 +148,7 @@ button {
     }
   header{
     text-align:center;
+    justify-content: center;
   }
   .changeM{
     margin-top:10px;
